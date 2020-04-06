@@ -26,4 +26,30 @@ plugin 的作用: 因为 loader 的功能比较单一,就是转换文件的,plug
 
 NamedModulesPlugin(在命令行打印更新的文件名,而不是 id), 默认是 id
 
-HotModuleReplacementPlugin是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了
+HotModuleReplacementPlugin是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了, 开启热更新是将css和js的热更新都开了
+
+2. css相关插件
+
+mini-css-extract-plugin(只在生产环境中使用) 作用, 将css整合到一个文件中, 使用mini-css-extract-plugin时, 使用MiniCssExtractPlugin.loader替换掉style-loader, MiniCssExtractPlugin.loader只在生产环境都可以用, 开发环境用style-loader
+
+optimize-css-assets-webpack-plugin将mini-css-extract-plugin整合的css文件进行压缩
+
+
+# 2.3 tree shaking
+
+tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking有两大前提, 第一是必须使用esmodule模块化, 第二是mode=production, 这有这样, tree shaking才会生效, 需要在package.json中设置. sideEffects来说明那些文件包含副作用不能随便删除代码, 一般就是样式,像less, css不能随便删除, 其他的都能随便删除
+
+
+# 2.4 垫片
+
+
+
+### webpack优化
+
+1. 多线程构建 happyPack
+
+2. tree shaking
+
+3. 
+
+
