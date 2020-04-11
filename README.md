@@ -26,30 +26,82 @@ plugin 的作用: 因为 loader 的功能比较单一,就是转换文件的,plug
 
 NamedModulesPlugin(在命令行打印更新的文件名,而不是 id), 默认是 id
 
-HotModuleReplacementPlugin是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了, 开启热更新是将css和js的热更新都开了
+HotModuleReplacementPlugin 是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了, 开启热更新是将 css 和 js 的热更新都开了
 
-2. css相关插件
+2. css 相关插件
 
-mini-css-extract-plugin(只在生产环境中使用) 作用, 将css整合到一个文件中, 使用mini-css-extract-plugin时, 使用MiniCssExtractPlugin.loader替换掉style-loader, MiniCssExtractPlugin.loader只在生产环境都可以用, 开发环境用style-loader
+mini-css-extract-plugin(只在生产环境中使用) 作用, 将 css 整合到一个文件中, 使用 mini-css-extract-plugin 时, 使用 MiniCssExtractPlugin.loader 替换掉 style-loader, MiniCssExtractPlugin.loader 只在生产环境都可以用, 开发环境用 style-loader
 
-optimize-css-assets-webpack-plugin将mini-css-extract-plugin整合的css文件进行压缩
+optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文件进行压缩
 
+3. CopyWebpackPlugin copy 静态资源插件, 我们可以将本地静态资源 copy 到打的包里, 并且 to 的文件路径参照,就是打包完成的目录
+   form 的文件路径参照就是项目根目录
+   new CopyWebpackPlugin([
+   { from: './src/platform/public/lang', to: '../public/lang' },
+   { from: './src/platform/resource/', to: '../' }
+   ])
+
+4. CleanWebpackPlugin 删除项目里的目录, 主要用于,删除打包目录, 它的文件路径参照也是根目录
+   new CleanWebpackPlugin(['dist/platform'], {
+   root: path.join(\_\_dirname, '../../'),
+   verbose: true,
+   dry: false
+   });
+
+5. 
 
 # 2.3 tree shaking
 
-tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking有两大前提, 第一是必须使用esmodule模块化, 第二是mode=production, 这有这样, tree shaking才会生效, 需要在package.json中设置. sideEffects来说明那些文件包含副作用不能随便删除代码, 一般就是样式,像less, css不能随便删除, 其他的都能随便删除
-
+tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking 有两大前提, 第一是必须使用 esmodule 模块化, 第二是 mode=production, 这有这样, tree shaking 才会生效, 需要在 package.json 中设置. sideEffects 来说明那些文件包含副作用不能随便删除代码, 一般就是样式,像 less, css 不能随便删除, 其他的都能随便删除
 
 # 2.4 垫片
 
-
-
-### webpack优化
+### webpack 优化
 
 1. 多线程构建 happyPack
+   happypack 就是结合 loader 使用的, 实现 loader 多线程转换, 提高 loader 的转换速度
+
+happypack 主要的字段: id(唯一的标识符 id 来代表当前的 HappyPack 是用来处理一类特定的文件), loaders(对哪些 loader 进行,多线程转换)
+
+happypack 优化 js 时, happypack 的 loaders 中只能配置 babel-loader, 其他 loader 都配置在 use 中
+
+happypack 优化 css 时, MiniCssExtractPlugin.loader 不能配置在 happypack 的 loaders 中, 只能配置在 use 中
 
 2. tree shaking
 
-3. 
+3. optimization webpack 自带优化配置项
 
+主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码, 模块根据被import次数,被提取到公共chunk中
 
+splitChunks: {
+  // 不管同步还是异步都提取公共模块
+  chunks: 'all',
+  // 提取公共模块的最小大小
+  minSize: 30000,
+  maxSize: 0,
+  // 模块被import引用几次,才提取成公共模块
+  minChunks: 1,
+  maxAsyncRequests: 5,
+  maxInitialRequests: 3,
+  // 公共chunk名的连接符
+  automaticNameDelimiter: '-',
+  name: true,
+  // 缓存组, 组名+共同引用的各个入口名组成, 分割成的代码块名
+  cacheGroups: {
+    // 每个缓存组
+    vendors: {
+      // 将哪些包分割成一个模块
+      test: /[\\/]node_modules[\\/]/,
+      // 优先级
+      priority: -10,
+      // 分割代码生成包的名称
+      filename: '[name].js'
+    },
+     // 每个缓存组
+    default: {
+      minChunks: 1,
+      priority: -20,
+      reuseExistingChunk: true,
+    }
+  }
+}
