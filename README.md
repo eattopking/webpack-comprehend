@@ -48,13 +48,30 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
    dry: false
    });
 
-5. 
+5. html相关
 
+1.HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，
+2.也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
+
+add-asset-html-webpack-plugin 这个plugin是将文件添加html文件中， 可以添加js文件
+
+6. new webpack.HashedModuleIdsPlugin(), // 将module id转换为根据路径生成的hash,防止hash值变化
 # 2.3 tree shaking
 
 tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking 有两大前提, 第一是必须使用 esmodule 模块化, 第二是 mode=production, 这有这样, tree shaking 才会生效, 需要在 package.json 中设置. sideEffects 来说明那些文件包含副作用不能随便删除代码, 一般就是样式,像 less, css 不能随便删除, 其他的都能随便删除
 
 # 2.4 垫片
+
+# 2.5 多种hash的概念和作用
+通过各种hash对文件进行命名是为了，做前端性能优化， 在生产环境的时候， 对请求的文件开启强缓存， 当文件内容没有变时， 我们的hash也就不变， 此时我们加载文件， 就会走之前的强缓存， 如果我们hash变了，文件名就变了， 那就会去加载最新的文件， 原来的文件的缓存也就没有意义了， 这样就不会走缓存了, 就是只有这一个作用， 并不会在hash不变时，构建的时候就不创建这个文件
+
+1. hash表示每次构建完成产生的hash值,compilation产生的hash值, 多入口打包时，所有入口对应的hash值都是一个
+2. chunkhash表示创建每个代码块时，代码块的hash， 后续代码块内的代码不变， chunkhash也是不变的
+3. contenthash 表示MiniCssExtractPlugin最后整合出来的css文件的hash，因为一开始css是在js中的，
+所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash:根据文件内容计算而来
+
+
+
 
 ### webpack 优化
 
