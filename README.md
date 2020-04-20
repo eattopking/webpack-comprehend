@@ -24,7 +24,10 @@ plugin 的作用: 因为 loader 的功能比较单一,就是转换文件的,plug
 
 1. 热更新相关插件
 
-NamedModulesPlugin(在命令行打印更新的文件名,而不是 id), 默认是 id
+NamedModulesPlugin(在命令行打印更新模块(就是文件)id,使用的是模块的路径名,而不是 数字id), 默认是 数字id, 这样有助于我们在命令行查看
+更新的文件, 在开发环境使用, 但是这个插件执行的时间有些长, 看情况使用
+
+HashedModuleIdsPlugin: 正常模块id是数字, 按照模块的顺序分为0,1,2,3,4,5...,会根据顺序的改变而发生变化id值, id发生变化后, 他们组成的chunk的chunkhash也会发生变化,HashedModuleIdsPlugin的作用就是根据模块的相对路径生成一个四位数的hash作为模块id, 而不是按照顺序作为id了,这样当模块顺序变化时就不会, 导致他们组成chunk的chunkhash改变了, HashedModuleIdsPlugin用于生成环境, 优化根据chunkhash判断的强缓存
 
 HotModuleReplacementPlugin 是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了, 开启热更新是将 css 和 js 的热更新都开了
 
@@ -69,6 +72,7 @@ tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没
 2. chunkhash表示创建每个代码块时，代码块的hash， 后续代码块内的代码不变， chunkhash也是不变的
 3. contenthash 表示MiniCssExtractPlugin最后整合出来的css文件的hash，因为一开始css是在js中的，
 所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash:根据文件内容计算而来
+4. id 指的就是模块(文件)id, 默认是数字
 
 
 
