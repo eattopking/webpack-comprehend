@@ -107,7 +107,7 @@ splitChunks: {
   // 公共chunk名的连接符
   automaticNameDelimiter: '-',
   name: true,
-  // 缓存组, 组名+共同引用的各个入口名组成, 分割成的代码块名
+  // 缓存组(缓存组是直译解释， 其实应该理解为公共代码组, 可以形成各个公共代码chunk), 组名+共同引用的各个入口名组成, 分割成的代码块名
   cacheGroups: {
     // 每个缓存组
     vendors: {
