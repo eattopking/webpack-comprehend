@@ -53,7 +53,7 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
 
 5. html相关
 
-1.HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，
+1.HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，HtmlWebpackPlugin可以直接配置chunk, 引入代码分割产生的代码块
 2.也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
 
 add-asset-html-webpack-plugin 这个plugin是将文件添加html文件中， 可以添加js文件
@@ -93,36 +93,51 @@ happypack 优化 css 时, MiniCssExtractPlugin.loader 不能配置在 happypack 
 3. optimization webpack 自带优化配置项
 
 主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码, 模块根据被import次数,被提取到公共chunk中
+优先级   maxAsyncRequests/maxInitialRequests < maxSize < minSize , 所以设置了minSize,其他三个就没啥用了 ,内部使用了SplitChunksPlugin 实现, 代码分割对js和css都是生效的
+
+test、priorty和reuseExistingChunk只能用于配置缓存组, 还有splitChunks的选项也可以在缓存组中使用, 覆盖splitChunks的内的选项
 
 splitChunks: {
-  // 不管同步还是异步都提取公共模块
+  // 不管同步加载的模块还是异步加载的模版都可以提取公共模块  async 异步加载的模块, 比如inport(), initial 不是异步加载的模块
   chunks: 'all',
-  // 提取公共模块的最小大小
+  // 提取公共模块的最小大小, 当公共模块的大小最小达到多少的时候, 才提取成一个公共模块, 单位是b
   minSize: 30000,
+  // 当公共模块大小达到maxsize的时候, 对他进行二次分割, 但是当maxSize的大小小于minsize的时候, maxsize就失效了, 因为minsize优先级最高
   maxSize: 0,
-  // 模块被import引用几次,才提取成公共模块
+  // 模块被引用几次,才提取成公共模块
   minChunks: 1,
+  // 异步请求的文件分割成了几个公共模块, 异步请求的文件就不再进行分割了
   maxAsyncRequests: 5,
+  // 非异步请求的文件分割成了几个公共模块, 异步请求的文件就不再进行分割了
   maxInitialRequests: 3,
   // 公共chunk名的连接符
   automaticNameDelimiter: '-',
+  // 是否使用output的文件命名方式, 当output的name在这里不是入口文件的name, 而是组名+共同引用的各个入口名组成, 默认true(使用), 还可以使用false, 就会按照index(0,1,2,3,4)来命名, 还可以使用, 这里设置的name可以被缓存组中的filename覆盖掉
+  函数和字符串, 这俩之后在研究, true基本就够用了
   name: true,
   // 缓存组, 组名+共同引用的各个入口名组成, 分割成的代码块名
   cacheGroups: {
-    // 每个缓存组
+    // 每个缓存组, vendors公共模块一般就是提取第三方模版的公共模块的
+    // 给哪个缓存组设置false就是禁用了, 可以自己自定义缓存组
     vendors: {
-      // 将哪些包分割成一个模块
+      // 设定当前缓存项, 需要代码分割的范围, 没有设置就是包含所有文件
       test: /[\\/]node_modules[\\/]/,
       // 优先级
       priority: -10,
-      // 分割代码生成包的名称
-      filename: '[name].js'
+      // 分割代码生成包的名称, 这里name代表组名+共同引用的各个入口名组成模块名
+      filename: '[name].js',‘
+      // 告知 webpack 应该忽略
+      // splitChunks.minSize,splitChunks.minChunks,splitChunks.maxAsyncRequests和
+      // splitChunks.maxInitialRequests 的配置项，并且总是为此缓存组创建块, 一般用不上
+      enforce: true
     },
-     // 每个缓存组
+     // 每个缓存组,default公共模块一般就是提取自己写的公共模块的
     default: {
       minChunks: 1,
       priority: -20,
-      reuseExistingChunk: true,
+      // 一个代码块正常的命名方式, 就是缓存组的名+各个引用了当前代码块的文件的名称拼接而成的, 但是如果reuseExistingChunk设置为true,
+      那命名方式就以第一引用的文件名称为准了, 之后引用的文件, 名称不会拼接到代码块的名称上去, 代码块不会重新创建更改名称了, 而是一直复用第一次创建的代码块, 如果reuseExistingChunk设置为false就会重新创建代码块, 更新代码块名称
+      reuseExistingChunk: true
     }
   }
 }
