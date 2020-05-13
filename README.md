@@ -18,16 +18,16 @@ loader 的作用: 转换 webpack 无法处理的文件的工具, webpack 默认�
 
 # 2.2 plugin
 
-plugin 的作用: 因为 loader 的功能比较单一,就是转换文件的,plugin 就是在 webpack 生命周期注册是监听钩子, 用于处理 loader 无法处理的事情, 比如清楚就是包, 压缩 js 和 压缩 css
+plugin 的作用: 因为 loader 的功能比较单一, 就是转换文件的, plugin 就是在 webpack 生命周期注册是监听钩子, 用于处理 loader 无法处理的事情, 比如清楚就是包, 压缩 js 和 压缩 css
 
 主要 plugin:
 
 1. 热更新相关插件
 
-NamedModulesPlugin(在命令行打印更新模块(就是文件)id,使用的是模块的路径名,而不是 数字id), 默认是 数字id, 这样有助于我们在命令行查看
+NamedModulesPlugin(在命令行打印更新模块(就是文件)id, 使用的是模块的路径名, 而不是 数字id), 默认是 数字id, 这样有助于我们在命令行查看
 更新的文件, 在开发环境使用, 但是这个插件执行的时间有些长, 看情况使用
 
-HashedModuleIdsPlugin: 正常模块id是数字, 按照模块的顺序分为0,1,2,3,4,5...,会根据顺序的改变而发生变化id值, id发生变化后, 他们组成的chunk的chunkhash也会发生变化,HashedModuleIdsPlugin的作用就是根据模块的相对路径生成一个四位数的hash作为模块id, 而不是按照顺序作为id了,这样当模块顺序变化时就不会, 导致他们组成chunk的chunkhash改变了, HashedModuleIdsPlugin用于生成环境, 优化根据chunkhash判断的强缓存
+HashedModuleIdsPlugin: 正常模块id是数字, 按照模块的顺序分为0, 1, 2, 3, 4, 5..., 会根据顺序的改变而发生变化id值, id发生变化后, 他们组成的chunk的chunkhash也会发生变化, HashedModuleIdsPlugin的作用就是根据模块的相对路径生成一个四位数的hash作为模块id, 而不是按照顺序作为id了, 这样当模块顺序变化时就不会, 导致他们组成chunk的chunkhash改变了, HashedModuleIdsPlugin用于生成环境, 优化根据chunkhash判断的强缓存
 
 HotModuleReplacementPlugin 是配合 webpack-dev-server hot 共同处理热更新, hot: true 后, 需要引入 HotModuleReplacementPlugin 才能实现热更新, 或者是在, npm 指令中设置 webpack-dev-server --hot --open, 然后 webpack 就会自动引入 HotModuleReplacementPlugin 插件了, 不需要自己手动引入了, 开启热更新是将 css 和 js 的热更新都开了
 
@@ -38,6 +38,7 @@ mini-css-extract-plugin(只在生产环境中使用) 作用, 将 css 整合到�
 optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文件进行压缩
 
 3. CopyWebpackPlugin copy 静态资源插件, 我们可以将本地静态资源 copy 到打的包里, 并且 to 的文件路径参照,就是打包完成的目录
+
    form 的文件路径参照就是项目根目录
    new CopyWebpackPlugin([
    { from: './src/platform/public/lang', to: '../public/lang' },
@@ -45,6 +46,7 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
    ])
 
 4. CleanWebpackPlugin 删除项目里的目录, 主要用于,删除打包目录, 它的文件路径参照也是根目录
+
    new CleanWebpackPlugin(['dist/platform'], {
    root: path.join(\_\_dirname, '../../'),
    verbose: true,
@@ -53,15 +55,16 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
 
 5. html相关
 
-1.HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，
-2.也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
+1. HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，
+2. 也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
 
 add-asset-html-webpack-plugin 这个plugin是将文件添加html文件中， 可以添加js文件
 
 6. new webpack.HashedModuleIdsPlugin(), // 将module id转换为根据路径生成的hash,防止hash值变化
+
 # 2.3 tree shaking
 
-tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking 有两大前提, 第一是必须使用 esmodule 模块化, 第二是 mode=production, 这有这样, tree shaking 才会生效, 需要在 package.json 中设置. sideEffects 来说明那些文件包含副作用不能随便删除代码, 一般就是样式,像 less, css 不能随便删除, 其他的都能随便删除
+tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没有引用代码, tree shaking 有两大前提, 第一是必须使用 esmodule 模块化, 第二是 mode=production, 这有这样, tree shaking 才会生效, 需要在 package.json 中设置. sideEffects 来说明那些文件包含副作用不能随便删除代码, 一般就是样式, 像 less, css 不能随便删除, 其他的都能随便删除
 
 # 2.4 垫片
 
@@ -71,18 +74,18 @@ tree shaking 的概念就是做构建时的优化, 清除无用代码, 比如没
 1. hash表示每次构建完成产生的hash值,compilation产生的hash值, 多入口打包时，所有入口对应的hash值都是一个
 2. chunkhash表示创建每个代码块时，代码块的hash， 后续代码块内的代码不变， chunkhash也是不变的
 3. contenthash 表示MiniCssExtractPlugin最后整合出来的css文件的hash，因为一开始css是在js中的，
-所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash:根据文件内容计算而来
+
+所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash: 根据文件内容计算而来
+
 4. id 指的就是模块(文件)id, 默认是数字
-
-
-
 
 ### webpack 优化
 
 1. 多线程构建 happyPack
+
    happypack 就是结合 loader 使用的, 实现 loader 多线程转换, 提高 loader 的转换速度
 
-happypack 主要的字段: id(唯一的标识符 id 来代表当前的 HappyPack 是用来处理一类特定的文件), loaders(对哪些 loader 进行,多线程转换)
+happypack 主要的字段: id(唯一的标识符 id 来代表当前的 HappyPack 是用来处理一类特定的文件), loaders(对哪些 loader 进行, 多线程转换)
 
 happypack 优化 js 时, happypack 的 loaders 中只能配置 babel-loader, 其他 loader 都配置在 use 中
 
@@ -92,7 +95,7 @@ happypack 优化 css 时, MiniCssExtractPlugin.loader 不能配置在 happypack 
 
 3. optimization webpack 自带优化配置项
 
-主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码, 模块根据被import次数,被提取到公共chunk中
+主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码, 模块根据被import次数, 被提取到公共chunk中
 
 splitChunks: {
   // 不管同步还是异步都提取公共模块
@@ -100,7 +103,7 @@ splitChunks: {
   // 提取公共模块的最小大小
   minSize: 30000,
   maxSize: 0,
-  // 模块被import引用几次,才提取成公共模块
+  // 模块被import引用几次, 才提取成公共模块
   minChunks: 1,
   maxAsyncRequests: 5,
   maxInitialRequests: 3,
@@ -109,6 +112,7 @@ splitChunks: {
   name: true,
   // 缓存组(缓存组是直译解释， 其实应该理解为公共代码组, 可以形成各个公共代码chunk), 组名+共同引用的各个入口名组成, 分割成的代码块名
   cacheGroups: {
+
     // 每个缓存组
     vendors: {
       // 将哪些包分割成一个模块
@@ -124,5 +128,6 @@ splitChunks: {
       priority: -20,
       reuseExistingChunk: true,
     }
+
   }
 }
