@@ -14,6 +14,12 @@ loader 的作用: 转换 webpack 无法处理的文件的工具, webpack 默认�
 
 1. url-loader 和 file-loader, 是处理图片和图标字体的 loader, url-loader 可以将图片和字体转换为 base64 字符串, url-loader 内部是依赖 file-loader 的, 所以使用 url-loader 时,也要安装 file-loader, url-loader 特有的参数, limit 表示限制文件的大小, 单位是 b, 如果文件大小,大于或者等于 limit 的值, 那就不将文件转为 base64 字符串(url-loader 默认值 limit 是无限制的, 就是文件多大都可以转成 base64 字符串), 而是使用 fallback 设置的 loader 替代 url-loader 处理文件, fallback 的默认值是 file-loader(file-loader 就是正常的处理图片和图标字体的 loader, 还是转成正常的图片和图标字体),mimetype 设置需要转换文件的 mime 类型, 如果没有设置, 会根据后缀名, 查找 mime 类型所以一般不用设置, url-loader 其他的配置项和 file-loader 相同
 
+1.1 babel 的理解
+
+babel 是 js 文件的转换工具, 主要包括babel-core(babel的主要实现), babel-polyfill(对babel不支持的一次方法的补充), babelrc文件, 主要配置babel的present(预设, 常见有present-env处理es6,7,8,9,10还有将要进入es规范的, present-react处理react语法的), 还有plugins(babel的一些插件,起到处理文件时一些其他的作用)
+
+babel的原理, 还各个部分的具体功能和实现:  待续
+
 2.
 
 # 2.2 plugin
@@ -53,14 +59,15 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
    dry: false
    });
 
-5. html相关
+5. html 相关
 
 1. HtmlWebpackPlugin 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中，
 2. 也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
 
-add-asset-html-webpack-plugin 这个plugin是将文件添加html文件中， 可以添加js文件
+add-asset-html-webpack-plugin 这个 plugin 是将文件添加 html 文件中， 可以添加 js 文件
 
-6. new webpack.HashedModuleIdsPlugin(), // 将module id转换为根据路径生成的hash,防止hash值变化
+6. new webpack.HashedModuleIdsPlugin(), // 将 module id 转换为根据路径生成的 hash,防止 hash 值变化
+
 
 # 2.3 tree shaking
 
