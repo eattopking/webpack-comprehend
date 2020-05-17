@@ -8,13 +8,36 @@
 
 2. # 主要概念
 
+## output
+
+output.publicPath 就是给图片的请求路径补全的， 打包处理后的图片src路径就是publicPath补全后的结果,
+和publicPath拼接的url如果是../../a这样的， 那直接拼成publicPath/a 这样的结果， 不用管../../。
+
+
+1. 以/开头的图片请求路径，是绝对路径， 最终以  协议 + host + 以/开头的图片请求路径 的结果去请求图片
+2. 不以/开头的图片请求路径，是相对路径， 最终以  地址栏中html文件所在目录的整体url + 不以/开头的图片请求路径 的组合结果去请求图片
+3. 提供了完成路径， 没有提供协议的， 以地址栏的协议为准请求图片
+4. 提供了协议的完整路径， 就以这个路径请求图片
+
+### 再看看字体是怎么引用的， 可错误的在改
+
 ## 2.1 loader
 
 loader 的作用: 转换 webpack 无法处理的文件的工具, webpack 默认只能处理 js(ES5 和之前)和 json 文件, 处理比如 css, 图片, react, 都需要用 loader
 
 主要 loader:
 
-1. url-loader 和 file-loader, 是处理图片和图标字体的 loader, url-loader 可以将图片和字体转换为 base64 字符串, url-loader 内部是依赖 file-loader 的, 所以使用 url-loader 时,也要安装 file-loader, url-loader 特有的参数, limit 表示限制文件的大小, 单位是 b, 如果文件大小,大于或者等于 limit 的值, 那就不将文件转为 base64 字符串(url-loader 默认值 limit 是无限制的, 就是文件多大都可以转成 base64 字符串), 而是使用 fallback 设置的 loader 替代 url-loader 处理文件, fallback 的默认值是 file-loader(file-loader 就是正常的处理图片和图标字体的 loader, 还是转成正常的图片和图标字体),mimetype 设置需要转换文件的 mime 类型, 如果没有设置, 会根据后缀名, 查找 mime 类型所以一般不用设置, url-loader 其他的配置项和 file-loader 相同
+#### url-loader
+
+  url-loader的主要作用：就是处理图片和字体的文件名字和文件打包到的位置的， 将图片的src引用处理成base64编码字符串，可以达到减少http请求的优化作用，因为图片的src引用变成base64字符串后，加载图片的时候就不会，发送额外的http请求了， 会在加载html的时候
+  直接就加载图片了，但是现在都是js动态生成html啊，这个时候base64是啥时候加载的呢？？？？这个还需要搞明白
+
+  1. url-loader 和 file-loader, 是处理图片和图标字体的 loader, 但是url-loader可以将图片转成base64格式
+  2. url-loader 可以将图片和字体转换为 base64 字符串
+  3. url-loader 内部是依赖 file-loader 的, 所以使用 url-loader 时,也要安装 file-loader
+  4. url-loader 特有的参数, limit 表示可以转换为base64编码的图片文件的最大值, 单位是 b, 如果文件大小大于limit 的值, 那就不将  文件转为 base64 字符串(url-loader 默认值 limit 是无限制的, 就是文件多大都可以转成 base64 字符串), 而是使用 fallback 设置  的 loader 替代 url-loader 处理文件, fallback 的默认值是 file-loader(file-loader 不能将图片转为base64编码，其余和  url-loader一样)
+  5. mimetype 设置需要转换文件的 mime 类型, 如果没有设置, 会根据后缀名, 查找 mime 类型所以一般不用设置, url-loader 其他的配置 项和 file-loader 相同
+  6. url-loader 的name属性，就是设置打包后文件的目录和文件名的， 如果只设置文件名， 那就将文件打包到output.path设置的目录下
 
 1.1 babel 的理解
 
@@ -73,8 +96,7 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
  1. 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中
  2. 也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
  3. HtmlWebpackPlugin可以多次调用， 生成多个html文件， 这个主要是用在打包多页面
-
-
+ 4. chunk的作用 。。。。。。
 
 ```
 // 打包多页面的主要代码
@@ -138,6 +160,10 @@ module.exports = {
  4. id 指的就是模块(文件)id, 默认是数字
 
 ****
+
+# webpack devSerVer
+
+  1. 使用https 和跳过https浏览器证书认证
 
 # webpack 优化
 
