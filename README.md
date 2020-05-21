@@ -177,7 +177,7 @@ module.exports = {
 
 ## 3. optimization webpack 自带优化配置项
 
-主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码, 模块根据被import次数, 被提取到公共chunk中
+主要使用, minimizer 自定义 terserplugin 插件(js 压缩插件), splitChunks 提取公共代码, 根据缓存组的配置, 决定组名和分多少组, 组名+共同引用的各个入口名组成, 分割成的代码块名, 根据每组优先级, 决定采用哪个组的配置提取公共代码
 
 #### 1. splitChunks 代码分割配置
 
@@ -194,8 +194,7 @@ splitChunks: {
 
   maxSize: 0,
 
-  // 模块被import引用几次, 才提取成公共模块
-
+  // 模块被entry这里面入口通过import或者require引用的次数, 引用的次数大于等于minchunks才把模块提取到公共模块中去
   minChunks: 1,
   maxAsyncRequests: 5,
   maxInitialRequests: 3,
@@ -233,3 +232,32 @@ splitChunks: {
   }
 }
 ```
+
+## 4. service work 离线加载，
+
+    1. webpack使用offline-plugin 实现 service work
+
+  ### offline-plugin 使用
+
+  1. npm install offline-plugin --save-dev ,安装
+
+  2. 在打包的入口文件中引入，开启serviceworker
+  ```
+  import * as OfflinePluginRuntime from 'offline-plugin/runtime';
+  OfflinePluginRuntime.install();
+  ```
+  3. 在webpack配置文件中配置 offline-plugin
+  ```
+  var OfflinePlugin = require('offline-plugin');
+  module.exports = {
+    plugins: [
+      new OfflinePlugin()
+    ]
+  }
+  ```
+  4. 这样配置之后结果就是，会在最后打的包里生成一个用于处理servicework的sw.js文件， 这个文件名称是自己定义的，
+  然后会在我们项目最后打包的js代码中， 自动引入这个sw.js（这里是个人理解， 因为在html中没有引入sw.js）, 然后剩下的
+  事就可以交给sw.js了，它会自己处理serviceWorker的生命周期
+
+  5. 在说一下，自己对serviceWorer的作用的理解， 他就是劫持请求， 在没有网的时候，将之前存储的数据，塞给请求，作为它的响应结果，保证在离线的情况下， 网页还可以正常浏览， 这是pwa的主要概念
+
