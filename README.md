@@ -13,7 +13,6 @@
 output.publicPath 就是给图片的请求路径补全的， 打包处理后的图片src路径就是publicPath补全后的结果,
 和publicPath拼接的url如果是../../a这样的， 那直接拼成publicPath/a 这样的结果， 不用管../../。
 
-
 1. 以/开头的图片请求路径，是绝对路径， 最终以  协议 + host + 以/开头的图片请求路径 的结果去请求图片
 2. 不以/开头的图片请求路径，是相对路径， 最终以  地址栏中html文件所在目录的整体url + 不以/开头的图片请求路径 的组合结果去请求图片
 3. 提供了完成路径， 没有提供协议的， 以地址栏的协议为准请求图片
@@ -188,14 +187,18 @@ splitChunks: {
 
   chunks: 'all',
 
-  // 提取公共模块的最小大小
+  // 提取出来的公共模块的最小大小， 不达到这个大小不能提取成公共模块
 
   minSize: 30000,
 
+  // 文件大于多少时被二次拆分， 但是这个值需要大于minSize，否则配置不生效
+  // 所以谨慎使用， 一般用不上
   maxSize: 0,
 
   // 模块被entry这里面入口通过import或者require引用的次数, 引用的次数大于等于minchunks才把模块提取到公共模块中去
   minChunks: 1,
+
+  // 这俩都没有minChunks优先级高， 所以不用管他俩， 直接用默认值就行
   maxAsyncRequests: 5,
   maxInitialRequests: 3,
 
@@ -228,7 +231,6 @@ splitChunks: {
 
       reuseExistingChunk: true,
     }
-
   }
 }
 ```
@@ -242,12 +244,15 @@ splitChunks: {
   1. npm install offline-plugin --save-dev ,安装
 
   2. 在打包的入口文件中引入，开启serviceworker
-  ```
+
+```
   import * as OfflinePluginRuntime from 'offline-plugin/runtime';
   OfflinePluginRuntime.install();
   ```
+
   3. 在webpack配置文件中配置 offline-plugin
-  ```
+
+```
   var OfflinePlugin = require('offline-plugin');
   module.exports = {
     plugins: [
@@ -255,9 +260,10 @@ splitChunks: {
     ]
   }
   ```
+
   4. 这样配置之后结果就是，会在最后打的包里生成一个用于处理servicework的sw.js文件， 这个文件名称是自己定义的，
+
   然后会在我们项目最后打包的js代码中， 自动引入这个sw.js（这里是个人理解， 因为在html中没有引入sw.js）, 然后剩下的
   事就可以交给sw.js了，它会自己处理serviceWorker的生命周期
 
   5. 在说一下，自己对serviceWorer的作用的理解， 他就是劫持请求， 在没有网的时候，将之前存储的数据，塞给请求，作为它的响应结果，保证在离线的情况下， 网页还可以正常浏览， 这是pwa的主要概念
-
