@@ -95,7 +95,6 @@ optimize-css-assets-webpack-plugin 将 mini-css-extract-plugin 整合的 css 文
  1. 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中
  2. 也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
  3. HtmlWebpackPlugin可以多次调用， 生成多个html文件， 这个主要是用在打包多页面
- 4. chunk的作用 。。。。。。
 
 ```
 // 打包多页面的主要代码
@@ -113,11 +112,13 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'page1.html',
+      // 指定在最后html文件中引入的公共模块
       chunks: ['vendors', 'page1']
     }),
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'page2.html',
+      // 指定在最后html文件中引入的公共模块
       chunks: ['vendors', 'page2']
     })
   ]
