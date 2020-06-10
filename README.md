@@ -164,6 +164,59 @@ module.exports = {
 # webpack devSerVer
 
   1. 使用https 和跳过https浏览器证书认证
+  2. 热更新的实现原理还没有写还不懂
+
+```
+  devServer: {
+    // 停止对访问者进行host检查， 允许使用ip访问服务， 和 host: '0.0.0.0' 配合，达到允许其他人访问自己服务的效果
+    disableHostCheck: true,
+    proxy: [{
+      //  当遇到非pc开头的api时,请到此处补充,如果太多,请抽离成单独模块, 这就是达到不同开头的接口，都代理到同一个域名的效果
+      context: ['/pc', '/m', '/callback'],
+      // target可以是域名也可以是ip
+      target: 'http://localhost:33333',
+      // target: 'https://test-m.weishi100.com/',
+      // 自定义
+      bypass: function (req, res, proxyOptions) {
+        if (req.url.indexOf('/pcLib') !== -1) {
+          return req.url;
+          // return false;
+        }
+      },
+      // 默认情况下只能代理到ip， 设置changeOrigin: true，就是可以ip和域名都能代理了
+      changeOrigin: true,
+      // 这里设置 secure: false， 就是关闭对https的证书验证， 让我们可以代理https的请求
+      secure: false,
+    }],
+    // 开启热更新
+    // hot: true,
+    // 这样设置允许， 其他人访问我们的服务
+    host: '0.0.0.0',
+    // 端口
+    port: PORT,
+  },
+  ```
+
+```
+  // devServer就是使用express 运行的一个node代理服务， 用于本地起服务， 和实现本地代理跨域请求，实现本地调试
+  // 使用webpack-dev-middleware express中间件实现webpack-dev-sever
+  // devServer的代理proxy是根据http-proxy-middleware这个npm包实现的, http-proxy-middleware就是express的一个中间件
+
+  const express = require('express');
+  const webpack = require('webpack');
+  const webpackDevMiddleware = require('webpack-dev-middleware'); // 监听文件改变重新执行
+  const config = require('./webpack.config.js');
+  <!-- node中使用webpack返回编译器 -->
+  const complier = webpack(config); // 编译器，相当于执行一直编译器就自动打包一次代码
+  const app = express();
+  app.use(webpackDevMiddleware(complier, {
+    publicPath: config.output.publishPath
+  }));
+  app.listen(3000, () => {
+    console.log('serve is running')
+  })
+  ```
+
 
 # webpack 优化
 
