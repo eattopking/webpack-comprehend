@@ -335,3 +335,19 @@ splitChunks: {
   事就可以交给sw.js了，它会自己处理serviceWorker的生命周期
 
   5. 在说一下，自己对serviceWorer的作用的理解， 他就是劫持请求， 在没有网的时候，将之前存储的数据，塞给请求，作为它的响应结果，保证在离线的情况下， 网页还可以正常浏览， 这是pwa的主要概念
+
+  # webpack-cli 主要指令
+
+  1. webpack --config webpack.config.js, --config 是执行webpack配置文件的指令
+  2. webpack 也可以不需要配置文件， 直接在命令行， 设置入口和出口， 但是这样不实用
+  3. webpack-bundle-analyzer 和 webpack --json配合使用， webpack --json 以json的形式产生控制台打印出来的数据， webpack-bundle-analyzer解析这个json数据
+  4. webpack --env 是获取设置shell里面的所有环境变量的， 是全局的
+  5. webpack --debug 打开loader的debug模式， 不知道有啥用
+  6. webpack --devtool 将devtool 设置为source-map模式， 可以让我们看到源码， 进行调试
+  7. webpack --progress 就是在控制台打印， 编译的进度
+  8. webpack --dispaly-error-details 这个展示我们编译报错的细节
+  9. webpack --color 设置控制台输出的样式
+  10. webpack --profile 就是在控制台打印，编译时每个步骤所需要的时间， 现在我是这么理解的， 还需要后续验证
+  11. 接下来还需要搞， shimming全局变量是啥意思。
+
+
