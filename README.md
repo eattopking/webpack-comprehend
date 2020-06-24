@@ -143,7 +143,22 @@ module.exports = {
 
 ****
 
-## 2.4 垫片
+## 2.4 shimming (垫片)
+
+shimming 就是用来解决对不支持模块化的一些老库的引用问题
+
+主要使用：
+
+providePlugin 在被webpack编译的文件中注入 package.json 中 包的全局变量， 在文件中直接使用
+
+exports-loader 将文件中的全局变量，导出成模块
+
+imports-loader 在文件中引入全局变量
+
+script-loader 类似在html中使用script标签引入js包
+
+
+
 
 ****
 
