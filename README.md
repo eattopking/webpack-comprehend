@@ -158,8 +158,6 @@ imports-loader 在文件中引入全局变量
 script-loader 类似在html中使用script标签引入js包
 
 
-
-
 ****
 
 ## 2.5 多种hash的概念和作用
@@ -320,7 +318,7 @@ splitChunks: {
 
 ## 4. service work 离线加载，
 
-    1. webpack使用offline-plugin 实现 service work
+  1. webpack使用offline-plugin 实现 service work
 
   ### offline-plugin 使用
 
@@ -363,6 +361,29 @@ splitChunks: {
   8. webpack --dispaly-error-details 这个展示我们编译报错的细节
   9. webpack --color 设置控制台输出的样式
   10. webpack --profile 就是在控制台打印，编译时每个步骤所需要的时间， 现在我是这么理解的， 还需要后续验证
-  11. 接下来还需要搞， shimming全局变量是啥意思。
 
 
+疑问：
+
+1. 外部扩展 只设置一类型， 但是用使用时， 使用了另一种类型的引用包需要的依赖， 包里面能正常使用麻
+
+2. 外部扩展 这个是啥意思
+```
+module.exports = {
+  externals: [
+    function(context, request, callback) {
+      // 该外部化模块是一个在`@scope/library`模块里的命名导出（named export）。
+      callback(null, ['@scope/library', 'namedexport'], 'commonjs');
+    }
+  ]
+};
+
+library: 暴露的， root也是这个麻
+
+umd  包括全局变量麻
+output设置多种模块类型， 如何设置
+
+暴露打包的包和暴露不打包的包， 有啥区别， 为啥要那样, 两种的区别是啥
+
+xmlhttprequest 是异步麻
+```
