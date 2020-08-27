@@ -1,5 +1,3 @@
-# webpack-comprehend
-
 # webpack 感悟
 
 1. webpack 的作用: webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和字体
