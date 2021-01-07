@@ -11,6 +11,13 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 ## 主要概念
 
+## webpack 识别node_modules中包的 原理
+1. webpack babel-loader中忽略node_modules中的包， 只是忽略对包中的语法的转化， webpack默认是可以识别代码中所有模块化引用导出的代码的， 所有包中的模块化代码都可以被webpack识别， 而不是需要webpack转化后识别
+
+2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入， 但是commonjs导出的模块不能被， es6module的方式引入， 因为es6module相当于commonjs的封装， 所以可以引入， 反过来就不行了es6module没有对commonjs导出的处理
+
+3. 可以把引用的包，当做自己的也写组件一样， 在引用的时候， 因为就是静态文件， webpack对他们模块化的处理都是相同的
+
 ### output
 
 ```
