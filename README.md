@@ -18,6 +18,10 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 3. 可以把引用的包，当做自己的也写组件一样， 在引用的时候， 因为就是静态文件， webpack对他们模块化的处理都是相同的
 
+## webpack的理解
+
+1. webpack默认值能识别， 多种模块化，不是babel-loader的作用， export default 会被webpack 先转换为module.exports.default，esmodule会先被webpack修改为对应的commonjs的模块化形式，然后在继续做模块化处理
+
 ### output
 
 ```
