@@ -22,9 +22,15 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 5. babel-plugin-import 这个babel 插件是解决我们react组件npm包， 引用时需要组件和样式分别引用的问题的，使用了它之后， 只需要引用组件就可以达到引用样式的效果了
 
+6. 安装npm包的时候， 不但会安装npm包本身， 还会安装这个包的package.json中的依赖，如果这个包导出的是编译好的结果，那这些依赖下载好了也是没有用的， 如果这个包导出的不是编译后的结果， 那这些依赖是有用的，这些依赖是组成这个包的一部分
+
+7. 如果使用webpack编译一个包， 设置在externals中的依赖是不会被编译在包里的，而是将externals中的依赖安装在使用包的用户的node_modules中， 用户在使用webpack编译的时候再将, 在通过包中webpack编译后的依赖引用， 将node_modules中包的依赖编译到用户的最后产出的文件中
+
 ## webpack的理解
 
 1. webpack默认值能识别， 多种模块化，不是babel-loader的作用， esmodule会先被webpack修改为对应的commonjs的模块化形式，然后在继续做模块化处理. export default 会被webpack 先转换为module.exports.default，export a 会被转换为 module.exports.a，然后在继续做模块化处理, 所以我们在用webpack构建的时候，是可以按照规则将  commonjs和esmodule混用的
+
+2.
 
 ### output
 
@@ -428,3 +434,7 @@ module.exports = {
 
 
 暴露打包的包和暴露不打包的包， 有啥区别， 为啥要那样, 两种的区别是啥
+
+
+### webpack5升级
+
