@@ -347,13 +347,15 @@ splitChunks: {
 
   automaticNameDelimiter: '-',
 
+  // 这个name必须设置成true， 默认name就是true， 不设置成true就不会提取正确名称的公共模块
   name: true,
 
   // 缓存组(缓存组是直译解释， 其实应该理解为公共代码组, 可以形成各个公共代码chunk), 组名+共同引用的各个入口名组成, 分割成的代码块名
 
   cacheGroups: {
+    // 每个缓存组都是一样的， vendors， default这两个缓存组是默认就有的， 写不写都是有的，这两个缓存组是有默认配置的， 还可以自己加其他缓存组， 构建执行缓存组规则的顺序， 就是按照缓存组的priority（权重）优先级的顺序依次去构建提取公共模块代码
+    // test,priority, reuseExistingChunk这三个配置项是缓存组特有的， 其他的项都是缓存组和splitChunks公共选项共用的， 缓存组中的属性可以覆盖splitChunks公共选项
 
-    // 每个缓存组
     vendors: {
       // 将哪些包分割成一个模块
       test: /[\\/]node_modules[\\/]/,
