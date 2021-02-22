@@ -361,7 +361,7 @@ splitChunks: {
       test: /[\\/]node_modules[\\/]/,
       // 优先级
       priority: -10,
-      // 分割代码生成包的名称
+      // 公共代码的名字, 如果不加filename， 就是默认的name + chunkhash
       filename: '[name].js'
     },
      // 每个缓存组
