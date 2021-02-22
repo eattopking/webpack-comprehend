@@ -336,7 +336,7 @@ splitChunks: {
   // 所以谨慎使用， 一般用不上
   maxSize: 0,
 
-  // 模块被entry这里面入口通过import或者require引用的次数, 引用的次数大于等于minchunks才把模块提取到公共模块中去
+  // 模块被entry这里面的几个入口引用了, 就将这个模块放到公共的模块中，引用这个模块的入口数大于等于minchunks才把模块提取到公共模块中去
   minChunks: 1,
 
   // 这俩都没有minChunks优先级高， 所以不用管他俩， 直接用默认值就行
