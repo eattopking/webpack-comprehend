@@ -32,6 +32,33 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 2.
 
+### chunk 和 module 的定义
+
+1. chunk 就表示我们构建出来的文件，（就好像我们正常项目中的tsx文件），module 就表示chunk中引用的模块（就好像我们tsx文件中通过import 引入的文件一样）
+
+2. chunk中引入module， 需要通过moduleId当做key， 还有一个函数作为module内容赋值给这个key
+```
+这就是对应一个chunk的存储结构
+[
+  [111], chunk的chunkId
+  {
+    module1: () => {}, chunk中引入的两个module
+    module2: () => {},
+  }
+]
+
+然后script中执行webpack打包处理的代码， 需要使用webpack运行函数执行， 然后给webpack运行函数穿的参数需要是数组，数组的值就是module的值（就是module对应的函数）（webpack运行函数的默认参数就是数组）， webpack运行函数的参数也可以是对象
+```
+
+3. 每个chunk 都对应一个chunkId，默认的chunkId是chunk的索引值加1，但是这个chunkId是不固定的， chunkId其实是不需要变的，所以我们要固定chunk的chunkId， 因为chunkId改变会导致自己chunk内的对应自己chunkId的值改变，也会导致其他chunk中对应自己的chunkId发生改变， 因为chunkHash是根据chunk的内容计算出来， 所以chunk内容改变，会导致chunkHash重新计算， 导致chunkHash发生了改变， 也就导致借用chunkHash命名的chunk的名称发生改变，进一步导致前端浏览器内对文件的缓存失效了，导致前端持久化缓存失效了
+
+4. 每个module 都对应一个moduleId，默认的moduleId是module的索引值加1，但是这个moduleId是不固定的， moduleId其实是不需要变的，所以我们要固定的moduleId， 因为moduleId改变会导致引用这个module的chunk内的对应自己moduleId的值改变，也会导致其他其他引用这个module的chunk中moduleId的改变， 因为chunkHash是根据chunk的内容计算出来， 所以chunk内容改变，会导致chunkHash重新计算， 导致chunkHash发生了改变， 也就导致借用chunkHash命名的chunk的名称发生改变，进一步导致前端浏览器内对文件的缓存失效了，导致前端持久化缓存失效了
+
+5. 我们需要固定moduleId和chunkId
+
+6. mode: development (开发默认)的情况会默认 固定chunkId(使用NamedChunksPlugin， 把chunk的chunkId改成entry中对应入口名称, 通过配置optimization 的chunkId: 'named'，然后在webpack构建内部调用NamedChunksPlugin插件实现)， 和 moduleId (使用 NamedModulesPlugin， 把moduleId改成对应模块的相对路径字符串，通过配置optimization 的moduleIds: 'named'， 然后在webpack构建内部调用NamedModulesPlugin实现)， 这个两处配置都是在开发模式下webpack自动调用的
+
+
 ### entry
 
 如果入口的js文件中引用了样式文件， 那最后打包的时候， 就会打包出一个和js文件名称相同的css文件
@@ -228,11 +255,10 @@ script-loader 类似在html中使用script标签引入js包
 ```
 1. hash表示每次构建完成产生的hash值, compilation产生的hash值, 多入口打包时，所有入口对应的hash值都是一个
 
-2. chunkhash表示创建每个代码块时，代码块的hash， 后续代码块内的代码不变， chunkhash也是不变的
+2. chunkhash表示创建chunk时，chunk的hash， 后续代码块内的代码不变， chunkhash也是不变的
 
 3. contenthash 表示MiniCssExtractPlugin最后整合出来的css文件的hash，因为一开始css是在js中的, 所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash: 根据文件内容计算而来
 
-4. id 指的就是模块(文件)id, 默认是数字
 ```
 ****
 
