@@ -54,9 +54,10 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 4. 每个module 都对应一个moduleId，默认的moduleId是module的索引值加1，但是这个moduleId是不固定的， moduleId其实是不需要变的，所以我们要固定的moduleId， 因为moduleId改变会导致引用这个module的chunk内的对应自己moduleId的值改变，也会导致其他其他引用这个module的chunk中moduleId的改变， 因为chunkHash是根据chunk的内容计算出来， 所以chunk内容改变，会导致chunkHash重新计算， 导致chunkHash发生了改变， 也就导致借用chunkHash命名的chunk的名称发生改变，进一步导致前端浏览器内对文件的缓存失效了，导致前端持久化缓存失效了
 
-5. 我们需要固定moduleId和chunkId
+5. 我们需要固定moduleId和chunkId， webpack5之前需要plugin固定，之后不需要了
 
-6. mode: development (开发默认)的情况会默认 固定chunkId(使用NamedChunksPlugin， 把chunk的chunkId改成entry中对应入口名称, 通过配置optimization 的chunkId: 'named'，然后在webpack构建内部调用NamedChunksPlugin插件实现)， 和 moduleId (使用 NamedModulesPlugin， 把moduleId改成对应模块的相对路径字符串，通过配置optimization 的moduleIds: 'named'， 然后在webpack构建内部调用NamedModulesPlugin实现)， 这个两处配置都是在开发模式下webpack自动调用的
+6. mode: development (开发默认)的情况会默认 固定chunkId(使用NamedChunksPlugin， 把chunk的chunkId改成entry中对应入口名称, 通过配置optimization 的chunkId: 'named'，然后在webpack构建内部调用NamedChunksPlugin插件实现)， 和 moduleId (使用 NamedModulesPlugin， 把moduleId改成对应模块的相对路径字符串，通过配置optimization 的moduleIds: 'named'， 然后在webpack构建内部调用NamedModulesPlugin实现)， 这个两处配置都是在开发模式下webpack自动调用的,
+生产模式 mode: production 也会默认固定moduleId（使用hashdModuleIdssPlugin实现）和chunkId，这些都是webpack4的实现， webpack5 直接更改了chunkId和moduleId的实现默认就是固定得了， 不需要再自己调用plugin固定， 或者webpack内部调用plugin实现固定
 
 
 ### entry
