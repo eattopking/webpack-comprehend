@@ -345,6 +345,12 @@ happypack 就是结合 loader 使用的, 实现 loader 多线程转换, 提高 l
 
 上面提到了， 就是去掉构建过程中发现的无用代码
 
+#### scope hoisting （作用域提升）
+
+webpack内部使用 ModuleConcatenationPlugin(模块关联插件)， 将所有和模块导出引用的相关的代码都放到一个函数中，
+使精简代码， 减少代码量，减少webpack内部的webpack_require的多次引用， 提升了执行的速度，scope hoisting 是在mode
+为 production时， webpack会自动调用，模块只有使用的es6模块， scope hoisting 才会将模块的导入和引用还有使用放到一个函数中，非es6模块化还有动态加载import(), scope hoisting 都不会对他们起作用
+
 
 #### optimization webpack 自带优化配置项
 
