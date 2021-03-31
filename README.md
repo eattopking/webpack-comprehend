@@ -259,12 +259,13 @@ script-loader 类似在html中使用script标签引入js包
 通过各种hash对文件进行命名是为了，做前端性能优化， 在生产环境的时候， 对请求的文件开启强缓存， 当文件内容 没有变时， 我们的hash也就不变， 此时我们加载文件， 就会走之前的强缓存， 如果我们hash变了，文件名就变 了， 那就会去加载最新的文件， 原来的文件的缓存也就没有意义了， 这样就不会走缓存了, 就是只有这一个作用，  并不会在hash不变时，构建的时候就不创建这个文件
 ```
 ```
-1. hash表示每次构建完成产生的hash值, compilation产生的hash值, 多入口打包时，所有入口对应的hash值都是一个
+1. hash表示每次构建完成产生的hash值, compilation产生的hash值, 多入口打包时，所有入口对应的hash值都是一个, 在webpack5之前是这样的， 但是webpack5中每次构建完成产生的hash值, compilation产生的hash值， 使用fullhash表示，hash只表示模块hash(就是原来的modulehash)
 
 2. chunkhash表示创建chunk时，chunk的hash， 后续代码块内的代码不变， chunkhash也是不变的
 
 3. contenthash 表示MiniCssExtractPlugin最后整合出来的css文件的hash，因为一开始css是在js中的, 所以css和js是一个代码块的，所以共用一个chunkhash， 所以这也就导致一个问题， 那就是但是css没有改变时， js发生改变，css的chunkhash也会变，所以导致css也进行了没有必要的加载，影响了性能，contenthash只会关注css文件的变化，css文件变化后， contenthash才会变, 确保只有css变化是contenthash才会变, contenthash: 根据文件内容计算而来
 
+4. id在表示chunk的时候就是chunkId， 在表示module的时候就是moduleId
 ```
 ****
 
