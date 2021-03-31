@@ -225,8 +225,13 @@ webpack.HashedModuleIdsPlugin
 要求: 使用tree shaking 有两大前提
 1. 是必须使用 esmodule 模块化
 2. mode=production, 这有这样, tree shaking 才会生效, 需要在 package.json 中设置. sideEffects 来说明那些文件包含副作用不能随便删除代码, 一般就是样式, 像 less, css 不能随便删除, 其他的都能随便删除
+3. webpack5 内部 tree shaking 处理了更深层级的export，进一步去除了无用代码， 减小代码体积
 ```
 ****
+
+#### prepack
+
+webpack5 内部使用prepack整合代码， 使编译后的代码变得更加简洁，执行速度更快， 代码体积更小
 
 ### shimming (垫片)
 
