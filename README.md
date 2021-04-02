@@ -86,6 +86,34 @@ libraryTarget: 表示打包好的库的导出方式，根据导出方式的不�
 ```
 ### 再看看字体是怎么引用的， 可错误的在改
 
+#### externals 外部扩展  就是根据webpack配置将包现有引入方式， 改为配置的引入方式，然后在宿主环境中引到对应的包，继续发挥之前的作用, externals可以用在业务代码， 包从cdn引入的情况， 也可以用在库的构建，从引用者的node_modules中引入
+
+```
+有几种形式：
+
+1. 编译后， 将原有的引入方式编译成commonjs2的引入方式， 以后的名称还是原有的名称， 这就适合构建包的时候使用
+externals: {
+    'fs-extra': 'commonjs2 fs-extra',
+},
+
+2. 构建后， 将原有fs-extra的引入， 编译成从window中或者global中的Fs属性中提取包， 这比较适合业务代码的构建， 然后依赖包从cdn获取的情况
+externals: {
+    'fs-extra': 'Fs',
+}
+
+3.
+externals: {
+    'lodash': {
+      // root 就是和2一样，构建后将一样的方式改成从全局变量_获取包， 如： window['_']
+      root: '_',
+      // 构建后， 将原有引用包的形式， 构建成使用commonjs的引用方式引入， 引用的结果是lodash， 例如 const lodash = require('lodash');
+      commonjs: 'lodash',
+      // 构建后， 将原有引用包的形式， 构建成使用commonjs2的引用方式引入， 引用的结果是lodash， 例如 import lodash from 'lodash';
+      commonjs2: 'lodash'
+    },
+}
+```
+
 ### loader
 
 ```
@@ -151,6 +179,10 @@ mini-css-extract-plugin(只在生产环境中使用):
 optimize-css-assets-webpack-plugin:
 
 将 mini-css-extract-plugin 整合的 css 文件进行压缩
+
+去除没有用到的css， 类似于js的tree shaking
+
+purgecss-webpack-plugin
 ```
 ```
 CopyWebpackPlugin:
@@ -240,17 +272,19 @@ webpack5 内部使用prepack整合代码， 使编译后的代码变得更加简
 ### shimming (垫片)
 
 ```
-shimming 就是用来解决对不支持模块化的一些老库的引用问题
+shimming 就是用来解决对不支持模块化的一些老库的引用问题，还有避免重复引用的问题
 
 主要使用：
 
-providePlugin 在被webpack编译的文件中注入 package.json 中 包的全局变量， 在文件中直接使用
+providePlugin 是向我们的文件中自动引入node_modules中的包， 使用import 或者require（这是从构建结果出发这么说的， 这是在构建构后达到了和手动引入一样的先过），使我们在开发过程中不需要每次都import模块， 例如react ， 使用这个配置后， 就不需要在每个文件中都引入react了，避免了报错react17之前
 
 exports-loader 将文件中的全局变量，导出成模块
 
 imports-loader 在文件中引入全局变量
 
 script-loader 类似在html中使用script标签引入js包
+
+expose-loader 就是我们可以设置引用node_modules中的模块是有， 我们自己项目中的模块， 然后作为变量放在window或者global中，这个根据target决定，然后使用script引用我们构建的包后，全局的window或者global中就有这个属性了， 就可以用了
 ```
 
 ****
