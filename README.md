@@ -14,7 +14,7 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 ## webpack 识别node_modules中包的 原理
 1. webpack babel-loader中忽略node_modules中的包， 只是忽略对包中的语法的转化， webpack默认是可以识别代码中所有模块化引用导出的代码的， 所有包中的模块化代码都可以被webpack识别， 而不是需要webpack转化后识别
 
-2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入， 但是commonjs导出的模块不能被， es6module的方式引入， 因为es6module相当于commonjs的封装， 所以可以引入， 反过来就不行了es6module没有对commonjs导出的处理
+2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入(引入后就是一个对象， 对象上的属性就是导出的变量名)，使用commonjs导出的模块也可以被es6module的方式导入(导入的方式就是把commonjs导出当做export default 导出一样，所以引入的时候也是export default的引入方式)， 因为es6module相当于commonjs的封装
 
 3. 可以把引用的包，当做自己的也写组件一样， 在引用的时候， 因为就是静态文件， webpack对他们模块化的处理都是相同的
 
@@ -34,7 +34,7 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 ### chunk 和 module 的定义
 
-1. chunk 就表示我们构建出来的文件，（就好像我们正常项目中的tsx文件），module 就表示chunk中引用的模块（就好像我们tsx文件中通过import 引入的文件一样）
+1. chunk(代码块) 就表示我们构建出来的文件，（就好像我们正常项目中的tsx文件），module(模块，就是项目里的文件) 就表示chunk中引用的模块，就表示项目中文件，module就表示项目中文件，包括js文件， css文件， 图片等，就是我们（就好像我们tsx文件中通过import 引入的文件一样）
 
 2. chunk中引入module， 需要通过moduleId当做key， 还有一个函数作为module内容赋值给这个key
 ```
