@@ -14,7 +14,7 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 ## webpack 识别node_modules中包的 原理
 1. webpack babel-loader中忽略node_modules中的包， 只是忽略对包中的语法的转化， webpack默认是可以识别代码中所有模块化引用导出的代码的， 所有包中的模块化代码都可以被webpack识别， 而不是需要webpack转化后识别
 
-2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入(引入后就是一个对象， 对象上的属性就是导出的变量名)，使用commonjs导出的模块也可以被es6module的方式导入(导入的方式就是把commonjs导出当做export default 导出一样，所以引入的时候也是export default的引入方式)， 因为es6module相当于commonjs的封装
+2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入(引入后就是一个对象， 对象上的属性就是导出的变量名)，使用commonjs导出的模块也可以被es6module的方式导入(导入的方式就是把commonjs导出当做export default 导出一样，所以引入的时候也是export default的引入方式)， 因为es6module相当于commonjs的封装，esmodule 引入图片的结果是图片的相对路径
 
 3. 可以把引用的包，当做自己的也写组件一样， 在引用的时候， 因为就是静态文件， webpack对他们模块化的处理都是相同的
 
@@ -124,11 +124,22 @@ loader 的作用:
 
 #### 主要 loader
 ```
-  url-loader
+  raw-loader 处理字符串数据
+
+  1. webpack5 之前处理图片和字体等文件：
+  url-loader、file-loader就是处理图片、字体等文件的模块化引用， 和最后的构建打包生成的路径和文件名称的loader, 将指定文件类型构建输出到固定目录下， 因为图片文件和字体文件都没有导出但是可以被require和import引入， 这都是url-loader和file-loader的作用, import和require引入得到的图片和字体文件结果都是被url-loader和file-loader处理后得到的， 得到的结果都是被url-loader和file-loader处理后的文件的相关信息， 所以我们引用本地构建的图片和字体文件就先先引入在使用， 不能直接写路径， 因为构建之后的文件名称和路径是会变的，使用 url-loader然后import或者require得到的图片信息是图片路径， 但是使用file-loader然后import得到的图片信息是路径，require得到的图片信息是对象，对象的default属性是图片的路径， 导师可以通过试着file-loader的esmodule为 false，实现require和import得到的图片信息都是路径
+
+  2. 在js中想要被url-loader、file-loader处理然后打包到最后的文件中，需要使用import或者require引用图片等文件、在css引用图片等文件就不需要import或者require，  因为css-loader会将css中相对路径的图片转化为require形式的
+
+  3. webpack5 开始就提供了内置的配置处理图片和字体等文件了，就不在需要url-loader和file-loader， raw-loader了
+
+  4. 处理每种文件的loader， 或者输出， 都有对自己输出文件的publicPath的控制，比如js的output中的publicPath， minicsspluginloader中的publicPath， 都是对构建出来的css或者js中的图片等资源的引用路径的设置
+
+  5. file-loader、和url-loader只会将图片、字体等文件构建输出， 不会影响引用这些资源的文件中原有的引用路径，但是通过原有的引用路径得到的结果是构建后的路径结果， js中的require和import得到的就是构建后的图片地址路径，不需要处理， css中使用本地图片路径，可能需要在minicssloader中处理一下publicPath， 使构建后的文件中也能应用到原有的，图片等文件
 
   url-loader的主要作用：
 
-  就是处理图片和字体的文件名字和文件打包到的位置的， 将图片的src引用处理成base64编码字符串，可以达到减少http请求的优化作用，因为图片的src引用变成base64字符串后，加载图片的时候就不会，发送额外的http请求了， 会在加载html的时候直接就加载图片了，但是现在都是js动态生成html啊，这个时候base64是啥时候加载的呢？？？？这个还需要搞明白
+  就是处理图片和字体的等文件名字和文件打包到的位置的， 将图片的src引用处理成base64编码字符串，可以达到减少http请求的优化作用，因为图片的src引用变成base64字符串后，加载图片的时候就不会，发送额外的http请求了， 会在加载html的时候直接就加载图片了，但是现在都是js动态生成html啊
 
   1. url-loader 和 file-loader, 是处理图片和图标字体的 loader, 但是url-loader可以将图片转成base64格式
   2. url-loader 可以将图片和字体转换为 base64 字符串
@@ -396,6 +407,9 @@ webpack内部使用 ModuleConcatenationPlugin(模块关联插件)， 将所有�
 使精简代码， 减少代码量，减少webpack内部的webpack_require的多次引用， 提升了执行的速度，scope hoisting 是在mode
 为 production时， webpack会自动调用，模块只有使用的es6模块， scope hoisting 才会将模块的导入和引用还有使用放到一个函数中，非es6模块化还有动态加载import(), scope hoisting 都不会对他们起作用
 
+#### cache-loader 缓存
+
+webpack5 中内置了缓存配置， 不在需要配置cache-loader实现缓存
 
 #### optimization webpack 自带优化配置项
 
