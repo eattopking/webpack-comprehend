@@ -225,6 +225,8 @@ HtmlWebpackPlugin 插件:
 1. 可以用于在生产模式下， 产生最后返回的html文件，打包的css文件和js文件会根据对应的目录关系自动引入html，其他不是本次打包的js代码，需要使用AddAssetHtmlWebpackPlugin加到html文件中
 2. 也可以用于开发模式下，返回开发模式下最后的html文件， 用开发展示
 3. HtmlWebpackPlugin可以多次调用， 生成多个html文件， 这个主要是用在打包多页面
+4. 多入口打包调用多次HtmlWebpackPlugin 会生成多个html文件， 默认每个html文件中都会引入所有入口打包后和公共的js文件，
+如果我们想只引入对应入口的js文件和指定的公共chunk， 那就在对应的HtmlWebpackPlugin的chunks数组中设置对应的entry 属性名称， 这样自己的html页面就只会引入自己的js文件了， 还有相反的excludeChunks， 就是在html不引入那些js, 我们可以在chunks配置通过entry 的属性名称设置引入的js， 也可以通过配置构建公共模块时的chunk名称（这个名称是不包括文件后缀的），来控制将公共chunk引入到我们的html文件中， 只有我们入口文件的相关文件中引入了css， css才会被构建出对应的css文件， 才会在html引入，对应引入的js chunks 相关的css文件
 
 // 打包多页面的主要代码
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -256,7 +258,7 @@ module.exports = {
 ```
 add-asset-html-webpack-plugin插件:
 
-1. 这个 plugin 是将js文件添加 html 文件中
+1. 这个 plugin 是将js文件引入到 html 文件中
 ```
 ```
 webpack.HashedModuleIdsPlugin
