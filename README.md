@@ -59,6 +59,13 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 6. mode: development (开发默认)的情况会默认 固定chunkId(使用NamedChunksPlugin， 把chunk的chunkId改成entry中对应入口名称, 通过配置optimization 的chunkId: 'named'，然后在webpack构建内部调用NamedChunksPlugin插件实现)， 和 moduleId (使用 NamedModulesPlugin， 把moduleId改成对应模块的相对路径字符串，通过配置optimization 的moduleIds: 'named'， 然后在webpack构建内部调用NamedModulesPlugin实现)， 这个两处配置都是在开发模式下webpack自动调用的,
 生产模式 mode: production 也会默认固定moduleId（使用hashdModuleIdssPlugin实现）和chunkId，这些都是webpack4的实现， webpack5 直接更改了chunkId和moduleId的实现默认就是固定得了， 不需要再自己调用plugin固定， 或者webpack内部调用plugin实现固定
 
+### target 构建目标
+```
+1. 可以构建用于node环境运行的代码，构建node环境用的js代码， 只需要构建自己写的代码， 不需要将核心模块代码和node_modules中的代码， 打包进最后的chunk中， 只保持commonjs  require就行， 所以我们在写node代码时， 也可以使用ts这样的等，webpack可以转化的语法，node默认支持模块化，所以就保持构建后的代码是commonjs模块化就行了
+2. 也可以构建用于浏览器运行的代码, 可以将node_modules中的包打包到最后的chunk中, 也可以不打包进去， 在target: 'web'的js中使用
+node代码， 构建的时候会执行， 获取到最后的结果，输出到最后的chunk中
+3. 还可以构建其他环境运行的js代码， 参考文档
+```
 
 ### entry
 
@@ -85,6 +92,14 @@ libraryTarget: 表示打包好的库的导出方式，根据导出方式的不�
 注意： 如果webpack构建的包是一个给别人使用库， 入口文件就要导出我们给用户使用的内容（使用 expert（导出多个） 、expert default(导出一个)、或者使用commonjs模块化导出）， 如果webpack构建的包是用于业务代码执行的包，那就在入口文件中直接执行代码， 不需要导出代码
 ```
 ### 再看看字体是怎么引用的， 可错误的在改
+
+### resolve 用于处理模块解析的相关参数
+
+```
+使用绝对路径引用模块时的查找路径（路径必须是绝对路径）， 可以设置多项， 排在前面的优先级高， 别名alias 比他的优先级更高
+
+resolve.modules:['node_modules'] (默认值),
+```
 
 #### externals 外部扩展  就是根据webpack配置将包现有引入方式， 改为配置的引入方式，然后在宿主环境中引到对应的包，继续发挥之前的作用, externals可以用在业务代码， 包从cdn引入的情况， 也可以用在库的构建，从引用者的node_modules中引入
 
