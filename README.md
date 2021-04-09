@@ -26,6 +26,8 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 7. 如果使用webpack编译一个包， 设置在externals中的依赖是不会被编译在包里的，而是将externals中的依赖安装在使用包的用户的node_modules中， 用户在使用webpack编译的时候再将, 在通过包中webpack编译后的依赖引用， 将node_modules中包的依赖编译到用户的最后产出的文件中
 
+8. webpack 中 引用node_modules中的包， 如果直接引用这个包那就是引用package.json中main字段导出的文件，如果引用node_modules中的包的项目中文件， 那就是以这个包的名称为项目的根目录，依次向下查找文件引用（例如： import from 'antd/lib/index.css'）
+
 ## webpack的理解
 
 1. webpack默认值能识别， 多种模块化，不是babel-loader的作用， esmodule会先被webpack修改为对应的commonjs的模块化形式，然后在继续做模块化处理. export default 会被webpack 先转换为module.exports.default，export a 会被转换为 module.exports.a，然后在继续做模块化处理, 所以我们在用webpack构建的时候，是可以按照规则将  commonjs和esmodule混用的
@@ -61,7 +63,8 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 
 ### target 构建目标
 ```
-1. 可以构建用于node环境运行的代码，构建node环境用的js代码， 只需要构建自己写的代码， 不需要将核心模块代码和node_modules中的代码， 打包进最后的chunk中， 只保持commonjs  require就行， 所以我们在写node代码时， 也可以使用ts这样的等，webpack可以转化的语法，node默认支持模块化，所以就保持构建后的代码是commonjs模块化就行了
+1. 可以构建用于node环境运行的代码，构建node环境用的js代码， 只需要构建自己写的代码， 不需要将核心模块代码和node_modules中的代码， 打包进最后的chunk中， 只保持commonjs  require就行， 所以我们在写node代码时， 也可以使用ts这样的等，webpack可以转化的语法，node默认支持模块化，可以引用node_modules和原生模块,所以就保持构建后的代码是commonjs模块化就行了,我们在构建node代码时，可以将第三方库和核心模块构建进最后的chunk但是没有必要，所以就不将他们构建进去
+
 2. 也可以构建用于浏览器运行的代码, 可以将node_modules中的包打包到最后的chunk中, 也可以不打包进去， 在target: 'web'的js中使用
 node代码， 构建的时候会执行， 获取到最后的结果，输出到最后的chunk中
 3. 还可以构建其他环境运行的js代码， 参考文档
@@ -98,7 +101,7 @@ libraryTarget: 表示打包好的库的导出方式，根据导出方式的不�
 ```
 使用绝对路径引用模块时的查找路径（路径必须是绝对路径）， 可以设置多项， 排在前面的优先级高， 别名alias 比他的优先级更高
 
-resolve.modules:['node_modules'] (默认值),
+resolve.modules:['node_modules'] (默认值)
 ```
 
 #### externals 外部扩展  就是根据webpack配置将包现有引入方式， 改为配置的引入方式，然后在宿主环境中引到对应的包，继续发挥之前的作用, externals可以用在业务代码， 包从cdn引入的情况， 也可以用在库的构建，从引用者的node_modules中引入
