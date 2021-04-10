@@ -12,7 +12,7 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 ## 主要概念
 
 ## webpack 识别node_modules中包的 原理
-1. webpack babel-loader中忽略node_modules中的包， 只是忽略对包中的语法的转化， webpack默认是可以识别代码中所有模块化引用导出的代码的， 所有包中的模块化代码都可以被webpack识别， 而不是需要webpack转化后识别
+1. webpack babel-loader中忽略node_modules中的包， 只是忽略对包中的语法的转化， webpack默认是可以识别代码中所有模块化引用导出的代码的， 所有包中的模块化代码都可以被webpack识别(像esmodule的模块化代码webpack都可以默认识别，而不需要babel转化后才能识别)， 而不是需要webpack转化后识别
 
 2. 在webpack中使用es6module导出的模块，可以被commonjs的方式引入(引入后就是一个对象， 对象上的属性就是导出的变量名)，使用commonjs导出的模块也可以被es6module的方式导入(导入的方式就是把commonjs导出当做export default 导出一样，所以引入的时候也是export default的引入方式)， 因为es6module相当于commonjs的封装，esmodule 引入图片的结果是图片的相对路径
 
@@ -64,6 +64,8 @@ webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和�
 ### target 构建目标
 ```
 1. 可以构建用于node环境运行的代码，构建node环境用的js代码， 只需要构建自己写的代码， 不需要将核心模块代码和node_modules中的代码， 打包进最后的chunk中， 只保持commonjs  require就行， 所以我们在写node代码时， 也可以使用ts这样的等，webpack可以转化的语法，node默认支持模块化，可以引用node_modules和原生模块,所以就保持构建后的代码是commonjs模块化就行了,我们在构建node代码时，可以将第三方库和核心模块构建进最后的chunk但是没有必要，所以就不将他们构建进去
+
+1.1 在构建node代码的时候可以在开发模式设置， watch 监听文件变化， 用于node服务的重起，设置监听可以在命令行也可以在webpack的配置设置
 
 2. 也可以构建用于浏览器运行的代码, 可以将node_modules中的包打包到最后的chunk中, 也可以不打包进去， 在target: 'web'的js中使用
 node代码， 构建的时候会执行， 获取到最后的结果，输出到最后的chunk中
@@ -416,6 +418,26 @@ happypack 就是结合 loader 使用的, 实现 loader 多线程转换, 提高 l
 
 1. happypack 主要的字段: id(唯一的标识符 id 来代表当前的 HappyPack 是用来处理一类特定的文件), loaders(对哪些 loader 进行, 多线程转换), happypack 优化 js 时, happypack 的 loaders 中只能配置 babel-loader, 其他 loader 都配置在 use 中, happypack 优化 css 时, MiniCssExtractPlugin.loader 不能配置在 happypack 的 loaders 中, 只能配置在 use 中
 ```
+
+### 预编译
+```
+DllPlugin
+DllreferencePlugin
+```
+
+### 不解析依赖的模块， 避免了解析依赖的时间
+
+```
+module: {
+  // 不解析依赖的模块，使用正则匹配
+  noParse: /juqery/
+}
+```
+
+### 忽略中的一些引入，就是不将模块中的一个
+IgnorePlugin
+
+
 
 #### tree shaking
 
