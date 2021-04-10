@@ -434,10 +434,15 @@ module: {
 }
 ```
 
-### 忽略中的一些引入，就是不将模块中的一个
-IgnorePlugin
+### 忽略指定模块或者目录中的一些引入的模块和目录，就是不将这些引入的模块中代码或者目录下的代码打包进最后的chunk中，减少不必要代码的打包， 节省时间
 
+```
+例如就是将time目录下的lang目录中的代码不打包进入最后的chunk中
 
+IgnorePlugin(/lang/, /time/)
+
+但是如果我们还想使用lang目录下的一些文件时， 就需要自己通过import引入， 这样在忽略全部的lang后， 还是会将我们自己引入的lang中的文件打包进最后chunk中供我们使用， 所以说我们自己import的优先级是高于IgnorePlugin的
+```
 
 #### tree shaking
 
