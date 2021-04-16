@@ -7,6 +7,12 @@
 webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和字体
 ```
 
+loader 和 plugin的区别
+
+loader 就只有在module中使用， 就是用来转换模块的，并将转化后的结果返回，loader实际就是一个使用模块化对外暴露的函数，结合loader Api提供的功能， 实现我们的业务，  一些特殊情况loader除外比如cache-loader用存储转换的文件， 主要就是loader-utils和schema-utils 这个两个npm包， 提供loader api
+
+plugin 就是可以干更广的事，可以根据插件接口， 实现很多种业务（插件接口就是compiler和compilation提供的api， 用于注册回调的也可以称为是api）, plugin就是一个使用模块化对外暴露的类
+
 ***
 
 ## 主要概念
@@ -140,6 +146,8 @@ externals: {
 loader 的作用:
 
 转换 webpack 无法处理的文件的工具, webpack 默认只能处理 js(ES5 和之前)和 json 文件, 处理比如 css, 图片, react, 都需要用 loader
+
+webpack 各种文件可以被import引入都是以为对应的文件转化loader 将文件文件引入处理成了require 或者 webpack自己的this.resolve webpack可以识别了， 所以模块化才好使的
 ```
 
 #### 主要 loader
@@ -184,6 +192,8 @@ loader 的作用:
 plugin 的作用:
 
 因为 loader 的功能比较单一, 就是转换文件的, plugin 就是在 webpack 生命周期注册是监听钩子, 用于处理 loader 无法处理的事情, 比如清楚就是包, 压缩 js 和 压缩 css
+
+plugin 就是可以干更广的事，可以根据插件接口， 实现很多种业务（插件接口就是compiler和compilation提供的api， 用于注册回调的也可以称为是api）, plugin就是一个使用模块化对外暴露的类
 ```
 
 #### 主要 plugin
