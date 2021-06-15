@@ -2,6 +2,10 @@
 
 ***
 
+import是静态引入必须放在文件的最上边的引入， 然后其他函数或者判断里边引用这个值
+
+require 和 import() ,他们两个就是动态加载，啥时候用啥时候加载就行了， 所以require 和import()在哪里都可以用，比如在事件回调里可以使用，判断里可以使用，require和import的区别就是require同步加载，直接就能加载获得模块内容, import() 是异步加载模块内容，返回一个promise实例，异步加载完成会将promise 状态修改为fulfilled， 然后我们在then的回调参数中就能拿到模块返回的内容对象，export 返回的内容， 这个内容变量就作为对象的key 变量值就作为value， export default 返回的内容, default 作为 内容对象的key， export default 返回的内容作为value
+
 ## webpack 的作用
 ```
 webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和字体
@@ -569,6 +573,10 @@ module.exports = {
 
 5. 在说一下，自己对serviceWorer的作用的理解， 他就是劫持请求， 在没有网的时候，将之前存储的数据，塞给请求，作为它的响应结果，保证在离线的情况下， 网页还可以正常浏览， 这是pwa的主要概念
 ```
+
+#### webpack-dev-server 实现， 热更新实现
+
+
 
 # webpack-cli 主要指令
 
