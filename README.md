@@ -574,6 +574,25 @@ module.exports = {
 5. 在说一下，自己对serviceWorer的作用的理解， 他就是劫持请求， 在没有网的时候，将之前存储的数据，塞给请求，作为它的响应结果，保证在离线的情况下， 网页还可以正常浏览， 这是pwa的主要概念
 ```
 
+### react 中使用svg
+
+svg  是xml， svg 也是图片， 可以将svg和图片一样直接赋值给image的src属性，
+svg 可以理解为就是svg格式的图片
+```
+1. 在webpackp配置处理svg格式的loader， @svgr/webpack loader
+
+2. react 中第一种使用方法  <image src="test.svg">
+
+3. react 中第二种使用方法 import { ReactComponent as SVG } from './logo.svg';
+<SVG className="App-logo" />, 将svg 可以直接引用为react的组件直接使用
+
+html 中和react 中svg的时候用方式不止这两种，不过这两种比较常用
+
+字体图标只能是纯色的， svg可以是多色的
+
+使用https://icomoon.io/app/#/select 将svg矢量图导入后获取图标， 获取到的是字体图标， 不是svg矢量图了，字体图标就是通过unicode码表示展示的图标， 导入svg矢量图可以得到字体图标是因为https://icomoon.io/app/#/select把svg 矢量图转化成字体图标了
+```
+
 #### webpack-dev-server 实现， 热更新实现
 
 
