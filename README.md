@@ -547,9 +547,9 @@ splitChunks: {
 }
 ```
 
-#### service work 离线加载:
+#### service worker 离线加载:
 
-webpack使用offline-plugin 实现 service work
+webpack使用offline-plugin 实现 service worker
 
 ```
 offline-plugin 使用:
