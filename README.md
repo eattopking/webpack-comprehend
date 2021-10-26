@@ -6,6 +6,8 @@ import是静态引入必须放在文件的最上边的引入， 然后其他函�
 
 require 和 import() ,他们两个就是动态加载，啥时候用啥时候加载就行了， 所以require 和import()在哪里都可以用，比如在事件回调里可以使用，判断里可以使用，require和import的区别就是require同步加载，直接就能加载获得模块内容, import() 是异步加载模块内容，返回一个promise实例，异步加载完成会将promise 状态修改为fulfilled， 然后我们在then的回调参数中就能拿到模块返回的内容对象，export 返回的内容， 这个内容变量就作为对象的key 变量值就作为value， export default 返回的内容, default 作为 内容对象的key， export default 返回的内容作为value
 
+import在代码打包构建编译的时候就加载到引用的内容了, 而require是在代码执行到的时候才加载引用的内容
+
 ## webpack 的作用
 ```
 webpack 就是一个模块化的构建工具, 它能处理 js, css, 图片, 和字体
@@ -161,7 +163,7 @@ webpack 各种文件可以被import引入都是以为对应的文件转化loader
   1. webpack5 之前处理图片和字体等文件：
   url-loader、file-loader就是处理图片、字体等文件的模块化引用， 和最后的构建打包生成的路径和文件名称的loader, 将指定文件类型构建输出到固定目录下， 因为图片文件和字体文件都没有导出但是可以被require和import引入， 这都是url-loader和file-loader的作用, import和require引入得到的图片和字体文件结果都是被url-loader和file-loader处理后得到的， 得到的结果都是被url-loader和file-loader处理后的文件的相关信息， 所以我们引用本地构建的图片和字体文件就先先引入在使用， 不能直接写路径， 因为构建之后的文件名称和路径是会变的，使用 url-loader然后import或者require得到的图片信息是图片路径， 但是使用file-loader然后import得到的图片信息是路径，require得到的图片信息是对象，对象的default属性是图片的路径， 导师可以通过试着file-loader的esmodule为 false，实现require和import得到的图片信息都是路径
 
-  2. 在js中想要被url-loader、file-loader处理然后打包到最后的文件中，需要使用import或者require引用图片等文件、在css引用图片等文件就不需要import或者require，  因为css-loader会将css中相对路径的图片转化为require形式的
+  2. 在js中想要被url-loader、file-loader处理然后打包到最后的文件中，需要使用import或者require引用图片等文件、在css引用图片等文件就不需要import或者require，  因为css-loader会将css中相对路径的图片转化为require形式的结果
 
   3. webpack5 开始就提供了内置的配置处理图片和字体等文件了，就不在需要url-loader和file-loader， raw-loader了
 
@@ -179,6 +181,8 @@ webpack 各种文件可以被import引入都是以为对应的文件转化loader
   4. url-loader 特有的参数, limit 表示可以转换为base64编码的图片文件的最大值, 单位是 b, 如果文件大小大于limit 的值, 那就不将  文件转为 base64 字符串(url-loader 默认值 limit 是无限制的, 就是文件多大都可以转成 base64 字符串), 而是使用 fallback 设置  的 loader 替代 url-loader 处理文件, fallback 的默认值是 file-loader(file-loader 不能将图片转为base64编码，其余和  url-loader一样)
   5. mimetype 设置需要转换文件的 mime 类型, 如果没有设置, 会根据后缀名, 查找 mime 类型所以一般不用设置, url-loader 其他的配置 项和 file-loader 相同
   6. url-loader 的name属性，就是设置打包后文件的目录和文件名的， 如果只设置文件名， 那就将文件打包到output.path设置的目录下
+
+  使用变量设置的相对路径, 不会再编译的进行获取绝对路径的操作, 会保持变量的值作为路径, 这样机会导致编译后找不到文件啦
   ```
   ```
   babel 的理解
