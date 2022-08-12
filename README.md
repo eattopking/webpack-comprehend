@@ -227,7 +227,9 @@ mini-css-extract-plugin(只在生产环境中使用):
 
 optimize-css-assets-webpack-plugin:
 
-将 mini-css-extract-plugin 整合的 css 文件进行压缩
+将 mini-css-extract-plugin 将 css代码提取到单独的文件中并进行压缩
+
+webpack 构建处理less、scss等，会将真正使用到的部分编译到css文件中， 没有用到的less和scss代码会被剔除掉
 
 去除没有用到的css， 类似于js的tree shaking
 
