@@ -233,6 +233,20 @@ webpack 构建处理less、scss等，会将真正使用到的部分编译到css�
 
 去除没有用到的css， 类似于js的tree shaking
 
+
+// webpack.prod.js
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+module.exports = {
+  // ...
+  optimization: {
+     // ...
+     minimizer: [new CssMinimizerPlugin()],
+  }
+}
+
+CSS压缩只在生产环境下生效，如果想要在开发环境下使用，需要设置optimization.minimize的值为true。
+
 purgecss-webpack-plugin
 ```
 ```
@@ -304,6 +318,10 @@ add-asset-html-webpack-plugin插件:
 webpack.HashedModuleIdsPlugin
 
 1. 将 module id 转换为根据路径生成的 hash, 防止 hash 值变化
+```
+
+```
+webpackbar 终端展示编译进度plugin
 ```
 ****
 
